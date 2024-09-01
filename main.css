@@ -36,6 +36,20 @@ body.dark-mode {
     transition: color 0.3s, margin 0.3s;
 }
 
+.section-content.light-mode {
+    background-color: white;
+    color: black;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.section-content.dark-mode {
+    background-color: #333;
+    color: #e0e0e0;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 8px;
+    padding: 10px;
+}
+
 .badge-toggle {
     cursor: pointer;
     padding: 10px 20px;
@@ -70,16 +84,4 @@ body.dark-mode {
 .container.dark-mode hr {
     border-color: #555;
     transition: border-color 0.3s;
-}
-
-.container.light-mode .section-content {
-    background-color: white;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.container.dark-mode .section-content {
-    background-color: #333;
-    border-radius: 8px;
-    padding: 10px;
-    transition: background-color 0.3s, color 0.3s;
 }
