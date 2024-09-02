@@ -21,16 +21,16 @@
 <body class="light-mode">
 <nav class="navbar navbar-expand-lg navbar-light bg-light light-mode">
     <div class="container-fluid position-relative">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="#">울랄라 안현준 홈페이지</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-link active" aria-current="page" href="#">Home</a>
-                <a class="nav-link" href="#">Features</a>
-                <a class="nav-link" href="#">Pricing</a>
-                <a class="nav-link disabled">Disabled</a>
+                <a class="nav-link" href="#">Project</a>
+                <a class="nav-link" href="#">Tact Stack</a>
+                <a class="nav-link disabled">Contact</a>
             </div>
         </div>
     </div>
@@ -81,13 +81,102 @@
     </div>
 </div>
 
+<!-- 게시글 목록 섹션 -->
+<div class="container mt-5">
+    <h2 class="text-right display-6 fst-italic">게시글 목록</h2>
+    <hr>
+    <div id="postsContainer" class="mt-4">
+        <!-- 게시글이 여기에 추가됨 -->
+    </div>
+</div>
+
+<!-- 게시글 작성 섹션 -->
+<div class="container mt-5">
+    <h2 class="text-right display-6 fst-italic">게시글 작성</h2>
+    <hr>
+
+    <form id="postForm">
+        <div class="mb-3">
+            <label for="postTitle" class="form-label">제목</label>
+            <input type="text" class="form-control" id="postTitle" required>
+        </div>
+        <div class="mb-3">
+            <label for="postContent" class="form-label">내용</label>
+            <textarea class="form-control" id="postContent" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">게시</button>
+    </form>
+</div>
+
+
+
 <!-- 다크 모드 토글 버튼 -->
 <span class="badge-toggle light-mode">Dark🔄</span>
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    var isDarkMode = false;
+    var posts = [];
+    var isEditing = false;
+    var editingPostId = null;
+    var isDarkMode = false; // isDarkMode 변수 초기화
+
+    function renderPosts() {
+        $('#postsContainer').html('');
+        posts.forEach(function (post, index) {
+            var postHTML = `
+                <div class="card mb-3 ${isDarkMode ? 'bg-dark text-white' : ''}" data-id="${index}">
+                    <div class="card-body">
+                        <h5 class="card-title">${post.title}</h5>
+                        <p class="card-text">${post.content}</p>
+                        <p class="card-text"><small class="text-muted">${post.date}</small></p>
+                        <button class="btn btn-warning btn-sm edit-post">수정</button>
+                        <button class="btn btn-danger btn-sm delete-post">삭제</button>
+                    </div>
+                </div>
+            `;
+            $('#postsContainer').prepend(postHTML);
+        });
+    }
+
+    $('#postForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var postTitle = $('#postTitle').val();
+        var postContent = $('#postContent').val();
+        var postDate = new Date().toLocaleString();
+
+        if (isEditing) {
+            // 수정 모드
+            posts[editingPostId].title = postTitle;
+            posts[editingPostId].content = postContent;
+            posts[editingPostId].date = postDate;
+            isEditing = false;
+            editingPostId = null;
+        } else {
+            // 게시글 생성
+            posts.push({ title: postTitle, content: postContent, date: postDate });
+        }
+
+        renderPosts();
+        $('#postForm')[0].reset();
+    });
+
+    $('#postsContainer').on('click', '.edit-post', function () {
+        var postId = $(this).closest('.card').data('id');
+        var post = posts[postId];
+
+        $('#postTitle').val(post.title);
+        $('#postContent').val(post.content);
+        isEditing = true;
+        editingPostId = postId;
+    });
+
+    $('#postsContainer').on('click', '.delete-post', function () {
+        var postId = $(this).closest('.card').data('id');
+        posts.splice(postId, 1);
+        renderPosts();
+    });
 
     $('.badge-toggle').on('click', function () {
         isDarkMode = !isDarkMode;
@@ -107,6 +196,8 @@
             $('.section-content').removeClass('dark-mode').addClass('light-mode');
             $('.container').removeClass('dark-mode').addClass('light-mode');
         }
+
+        renderPosts(); // 모드 변경 시 게시글 스타일도 업데이트
     });
 </script>
 </body>
